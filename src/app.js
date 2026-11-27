@@ -3,6 +3,7 @@ const path = require('path');
 const createAuthRoutes = require('./modules/users/auth.routes');
 const createEventRoutes = require('./modules/events/event.routes');
 const createRegistrationRoutes = require('./modules/registrations/registration.routes');
+const createNotificationRoutes = require('./modules/notifications/notification.routes');
 const { connectDatabase } = require('./config/database');
 
 function createApp(dbInstance) {
@@ -46,6 +47,11 @@ function createApp(dbInstance) {
   const registrationRoutes = createRegistrationRoutes(getDb);
   app.use('/api/events', registrationRoutes);
   app.use('/api/registrations', registrationRoutes);
+
+  // Notification routes
+  const notificationRoutes = createNotificationRoutes(getDb);
+  app.use('/api/notifications', notificationRoutes);
+  app.use('/api/events', notificationRoutes);
 
   // 404 handler for unknown API routes
   app.use('/api', (req, res) => {
