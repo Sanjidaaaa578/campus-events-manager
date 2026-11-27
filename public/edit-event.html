@@ -8,70 +8,100 @@
   <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
   <link rel="stylesheet" href="css/custom.css">
 </head>
-<body>
+<body class="bg-light">
   <div id="navbar-container"></div>
 
-  <div class="container py-5">
+  <!-- Header Banner -->
+  <section class="bg-dark text-white py-4 mb-4 border-bottom border-secondary border-opacity-25" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%) !important;">
+    <div class="container py-2">
+      <div class="d-flex align-items-center gap-3">
+        <a href="my-events.html" class="btn btn-glass btn-sm rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+          <h2 class="h3 fw-bold mb-0 text-white">Edit Event Details</h2>
+          <p class="text-light opacity-75 small mb-0">Changes saved will automatically notify registered student attendees</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container pb-5">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <div class="card p-4 shadow-sm border-0">
-          <div class="d-flex align-items-center mb-4">
-            <i class="bi bi-pencil-square text-primary display-5 me-3"></i>
-            <div>
-              <h2 class="fw-bold mb-0">Edit Event Details</h2>
-              <p class="text-muted small mb-0">Updates will automatically notify all registered attendees</p>
-            </div>
-          </div>
-
+        <div class="card p-4 p-md-5 shadow-sm border-0 rounded-4">
           <form id="edit-event-form" novalidate onsubmit="handleEditEvent(event)">
+            <div class="mb-4 pb-3 border-bottom">
+              <h5 class="fw-bold text-primary mb-1"><i class="bi bi-pencil-square me-2"></i>Event Information</h5>
+              <p class="text-muted small mb-0">Update title, schedule, or venue specifications</p>
+            </div>
+
             <div class="mb-3">
-              <label for="edit-title" class="form-label fw-semibold">Event Title *</label>
-              <input type="text" id="edit-title" class="form-control" required data-testid="edit-title">
+              <label for="edit-title" class="form-label fw-semibold small text-muted">Event Title *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-type"></i></span>
+                <input type="text" id="edit-title" class="form-control" required data-testid="edit-title">
+              </div>
               <div class="invalid-feedback">Title is required.</div>
             </div>
 
-            <div class="mb-3">
-              <label for="edit-desc" class="form-label fw-semibold">Description</label>
+            <div class="mb-4">
+              <label for="edit-desc" class="form-label fw-semibold small text-muted">Description</label>
               <textarea id="edit-desc" class="form-control" rows="4" data-testid="edit-desc"></textarea>
             </div>
 
             <div class="row g-3 mb-3">
               <div class="col-md-6">
-                <label for="edit-date" class="form-label fw-semibold">Date *</label>
-                <input type="date" id="edit-date" class="form-control" required data-testid="edit-date">
+                <label for="edit-date" class="form-label fw-semibold small text-muted">Date *</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                  <input type="date" id="edit-date" class="form-control" required data-testid="edit-date">
+                </div>
               </div>
               <div class="col-md-6">
-                <label for="edit-time" class="form-label fw-semibold">Time *</label>
-                <input type="time" id="edit-time" class="form-control" required data-testid="edit-time">
+                <label for="edit-time" class="form-label fw-semibold small text-muted">Time *</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-clock"></i></span>
+                  <input type="time" id="edit-time" class="form-control" required data-testid="edit-time">
+                </div>
               </div>
             </div>
 
             <div class="row g-3 mb-4">
               <div class="col-md-5">
-                <label for="edit-venue" class="form-label fw-semibold">Venue *</label>
-                <input type="text" id="edit-venue" class="form-control" required data-testid="edit-venue">
+                <label for="edit-venue" class="form-label fw-semibold small text-muted">Campus Venue *</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-building"></i></span>
+                  <input type="text" id="edit-venue" class="form-control" required data-testid="edit-venue">
+                </div>
               </div>
               <div class="col-md-3">
-                <label for="edit-capacity" class="form-label fw-semibold">Capacity *</label>
-                <input type="number" id="edit-capacity" class="form-control" min="1" required data-testid="edit-capacity">
+                <label for="edit-capacity" class="form-label fw-semibold small text-muted">Capacity *</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-people"></i></span>
+                  <input type="number" id="edit-capacity" class="form-control" min="1" required data-testid="edit-capacity">
+                </div>
               </div>
               <div class="col-md-4">
-                <label for="edit-category" class="form-label fw-semibold">Category *</label>
-                <select id="edit-category" class="form-select" data-testid="edit-category">
-                  <option value="Technology">Technology</option>
-                  <option value="Workshop">Workshop</option>
-                  <option value="Sports">Sports</option>
-                  <option value="Career">Career</option>
-                  <option value="Academic">Academic</option>
-                  <option value="Social">Social</option>
-                </select>
+                <label for="edit-category" class="form-label fw-semibold small text-muted">Category *</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                  <select id="edit-category" class="form-select" data-testid="edit-category">
+                    <option value="Technology">Technology</option>
+                    <option value="Workshop">Workshop</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Career">Career</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Social">Social</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-            <div class="d-flex justify-content-end gap-2 border-top pt-3">
-              <a href="my-events.html" class="btn btn-outline-secondary">Cancel</a>
-              <button type="submit" id="save-event-btn" class="btn btn-primary px-4 fw-semibold" data-testid="edit-submit-btn">
-                Save & Broadcast Updates
+            <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+              <a href="my-events.html" class="btn btn-outline-secondary px-3">Cancel</a>
+              <button type="submit" id="save-edit-btn" class="btn btn-primary px-4 fw-semibold" data-testid="edit-submit-btn">
+                <i class="bi bi-check2 me-1"></i> Save Changes
               </button>
             </div>
           </form>
@@ -79,6 +109,12 @@
       </div>
     </div>
   </div>
+
+  <footer class="py-4 mt-auto">
+    <div class="container text-center">
+      <p class="mb-0 text-muted small">&copy; 2026 Campus Events Manager. All rights reserved.</p>
+    </div>
+  </footer>
 
   <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="js/shared.js"></script>

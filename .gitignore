@@ -4,3 +4,11 @@ coverage/
 *.log
 data/
 *.sqlite
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.tmp
+*.bak

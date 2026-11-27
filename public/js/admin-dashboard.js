@@ -20,13 +20,17 @@ async function loadDashboardAnalytics() {
     const popRes = await API.fetch('/api/reports/popular-events?limit=5');
     const popTbody = document.getElementById('popular-events-tbody');
     popTbody.innerHTML = '';
-    (popRes.popularEvents || []).forEach(p => {
+    (popRes.popularEvents || []).forEach((p, idx) => {
+      const theme = getCategoryTheme(p.category);
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td class="ps-3 fw-semibold text-primary">${p.title}</td>
-        <td><span class="badge bg-light text-muted border">${p.category}</span></td>
+        <td class="ps-4">
+          <span class="badge ${idx === 0 ? 'bg-danger text-white' : idx === 1 ? 'bg-warning text-dark' : 'bg-light text-muted border'} me-2 fw-bold">#${idx + 1}</span>
+          <span class="fw-semibold text-dark">${p.title}</span>
+        </td>
+        <td><span class="badge ${theme.headerClass} text-white px-2 py-1">${p.category}</span></td>
         <td class="small text-muted">${p.organizer_name}</td>
-        <td class="text-end pe-3 fw-bold text-success">${p.registration_count}</td>
+        <td class="text-end pe-4 fw-bold text-success">${p.registration_count} seats</td>
       `;
       popTbody.appendChild(tr);
     });
@@ -46,7 +50,7 @@ async function loadDashboardAnalytics() {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="ps-4">
-          <div class="fw-semibold text-primary">${a.title}</div>
+          <div class="fw-semibold text-dark">${a.title}</div>
           <small class="badge badge-status-${a.event_status.toLowerCase()}">${a.event_status}</small>
         </td>
         <td class="small text-muted">${a.date}</td>
@@ -55,10 +59,10 @@ async function loadDashboardAnalytics() {
         <td class="small fw-bold text-warning">${a.waitlisted_count}</td>
         <td class="pe-4">
           <div class="d-flex align-items-center">
-            <div class="progress flex-grow-1 me-2" style="height: 8px;">
+            <div class="progress flex-grow-1 me-2" style="height: 8px; border-radius: var(--radius-full);">
               <div class="progress-bar ${isFull ? 'bg-danger' : pct > 75 ? 'bg-warning' : 'bg-primary'}" style="width: ${pct}%"></div>
             </div>
-            <span class="small fw-bold">${pct}%</span>
+            <span class="small fw-bold text-dark">${pct}%</span>
           </div>
         </td>
       `;
@@ -86,16 +90,25 @@ function renderCategoryChart(categories) {
       datasets: [{
         data: data,
         backgroundColor: [
-          '#1e3a8a', '#0f766e', '#f59e0b', '#dc2626', '#8b5cf6', '#06b6d4'
-        ]
+          '#4f46e5', '#8b5cf6', '#10b981', '#f59e0b', '#06b6d4', '#ec4899', '#64748b'
+        ],
+        borderWidth: 2,
+        borderColor: '#ffffff'
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'bottom' }
-      }
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: 12,
+            font: { family: "'Plus Jakarta Sans', sans-serif", size: 12 }
+          }
+        }
+      },
+      cutout: '68%'
     }
   });
 }

@@ -12,7 +12,7 @@
     "test:e2e": "cross-env NODE_ENV=test jest tests/e2e --runInBand",
     "test:all": "cross-env NODE_ENV=test jest --runInBand",
     "test:watch": "cross-env NODE_ENV=test jest --watch",
-    "test:coverage": "cross-env NODE_ENV=test jest --coverage"
+    "test:coverage": "cross-env NODE_ENV=test jest --runInBand --testPathIgnorePatterns=tests/e2e --coverage"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,7 @@
   "devDependencies": {
     "chromedriver": "^158.0.1",
     "cross-env": "^10.1.0",
+    "docx": "^9.16.1",
     "jest": "^30.5.2",
     "nodemon": "^3.1.14",
     "selenium-webdriver": "^4.51.0",

@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
+  renderNavbar('profile');
+
   // Check auth
-  if (!isAuthenticated()) {
+  if (!API.getToken()) {
     window.location.href = 'login.html';
     return;
   }
@@ -16,6 +18,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const saveProfileBtn = document.getElementById('saveProfileBtn');
   const saveSpinner = document.getElementById('saveSpinner');
   const resetProfileBtn = document.getElementById('resetProfileBtn');
+  const profileHeaderAvatar = document.getElementById('profileHeaderAvatar');
+  const roleDisplayBadge = document.getElementById('roleDisplayBadge');
 
   let initialUserData = null;
 
@@ -24,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       profileLoading.classList.remove('d-none');
       profileForm.classList.add('d-none');
 
-      const res = await apiRequest('/api/users/profile');
+      const res = await API.fetch('/api/users/profile');
       initialUserData = res.user;
 
       profileEmail.value = res.user.email || '';
@@ -33,6 +37,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       profileDepartment.value = res.user.department || '';
       profilePassword.value = '';
       profileConfirmPassword.value = '';
+
+      if (profileHeaderAvatar && res.user.name) {
+        profileHeaderAvatar.textContent = res.user.name.charAt(0).toUpperCase();
+      }
+      if (roleDisplayBadge && res.user.role) {
+        roleDisplayBadge.textContent = res.user.role;
+        roleDisplayBadge.className = `badge ${res.user.role === 'Admin' ? 'bg-warning text-dark' : res.user.role === 'Organizer' ? 'bg-info text-dark' : 'bg-primary text-white'} px-3 py-2`;
+      }
 
       profileLoading.classList.add('d-none');
       profileForm.classList.remove('d-none');
@@ -100,18 +112,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         body.password = password;
       }
 
-      const res = await apiRequest('/api/users/profile', {
+      const res = await API.fetch('/api/users/profile', {
         method: 'PUT',
         body: JSON.stringify(body)
       });
 
       // Update stored user
-      const currentUser = getCurrentUser();
+      const currentUser = API.getUser();
       if (currentUser) {
         currentUser.name = res.user.name;
         currentUser.department = res.user.department;
-        localStorage.setItem('user', JSON.stringify(currentUser));
-        renderNavbar();
+        API.setUser(currentUser);
+        renderNavbar('profile');
+      }
+
+      if (profileHeaderAvatar && res.user.name) {
+        profileHeaderAvatar.textContent = res.user.name.charAt(0).toUpperCase();
       }
 
       showToast('Profile updated successfully!', 'success');

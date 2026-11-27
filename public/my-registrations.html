@@ -8,27 +8,35 @@
   <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
   <link rel="stylesheet" href="css/custom.css">
 </head>
-<body>
+<body class="bg-light">
   <div id="navbar-container"></div>
 
-  <div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h2 class="fw-bold mb-1"><i class="bi bi-ticket-perforated text-primary me-2"></i> My Registered Events</h2>
-        <p class="text-muted small mb-0">Track your confirmed seats and waiting list queues</p>
+  <!-- Header Banner -->
+  <section class="bg-dark text-white py-4 mb-4 border-bottom border-secondary border-opacity-25" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%) !important;">
+    <div class="container py-2">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <span class="badge bg-primary bg-opacity-25 text-white border border-primary border-opacity-50 px-3 py-1 mb-2">STUDENT PORTAL</span>
+          <h2 class="fw-bold mb-1 text-white"><i class="bi bi-ticket-perforated text-indigo-400 me-2"></i> My Registered Events</h2>
+          <p class="text-light opacity-75 small mb-0">Track your confirmed seats, waiting list queue positions, and schedules</p>
+        </div>
+        <a href="events.html" class="btn btn-primary btn-sm px-3 shadow-sm">
+          <i class="bi bi-plus-lg me-1"></i> Browse More Events
+        </a>
       </div>
-      <a href="events.html" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-lg me-1"></i> Register for More Events</a>
     </div>
+  </section>
 
+  <div class="container pb-5">
     <!-- Tabs: Confirmed vs Waitlisted -->
-    <ul class="nav nav-pills mb-4" id="regTabs" role="tablist">
+    <ul class="nav nav-pills mb-4 gap-2" id="regTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active px-4 fw-semibold" id="confirmed-tab" data-bs-toggle="pill" data-bs-target="#confirmed-pane" type="button" role="tab">
-          <i class="bi bi-check-circle me-1"></i> Confirmed (<span id="confirmed-count">0</span>)
+        <button class="nav-link active px-4 py-2 fw-semibold rounded-pill" id="confirmed-tab" data-bs-toggle="pill" data-bs-target="#confirmed-pane" type="button" role="tab">
+          <i class="bi bi-check-circle me-1"></i> Confirmed Seats (<span id="confirmed-count">0</span>)
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link px-4 fw-semibold" id="waitlisted-tab" data-bs-toggle="pill" data-bs-target="#waitlisted-pane" type="button" role="tab">
+        <button class="nav-link px-4 py-2 fw-semibold rounded-pill" id="waitlisted-tab" data-bs-toggle="pill" data-bs-target="#waitlisted-pane" type="button" role="tab">
           <i class="bi bi-clock-history me-1"></i> Waiting List (<span id="waitlist-count">0</span>)
         </button>
       </li>
@@ -48,6 +56,12 @@
       </div>
     </div>
   </div>
+
+  <footer class="py-4 mt-auto">
+    <div class="container text-center">
+      <p class="mb-0 text-muted small">&copy; 2026 Campus Events Manager. All rights reserved.</p>
+    </div>
+  </footer>
 
   <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="js/shared.js"></script>

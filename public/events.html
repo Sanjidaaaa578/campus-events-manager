@@ -11,19 +11,25 @@
 <body>
   <div id="navbar-container"></div>
 
-  <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h2 class="fw-bold mb-1"><i class="bi bi-compass text-primary me-2"></i> Campus Events Catalog</h2>
-        <p class="text-muted small mb-0">Browse, filter, and register for student activities</p>
+  <!-- Header Section -->
+  <section class="bg-dark text-white py-4 mb-4 border-bottom border-secondary border-opacity-25" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%) !important;">
+    <div class="container py-2">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <span class="badge bg-primary bg-opacity-25 text-white border border-primary border-opacity-50 px-3 py-1 mb-2">EXPLORE & DISCOVER</span>
+          <h2 class="fw-bold mb-1 text-white"><i class="bi bi-compass text-indigo-400 me-2"></i> Campus Events Catalog</h2>
+          <p class="text-light opacity-75 small mb-0">Browse scheduled hackathons, academic lectures, athletic matches, and student workshops</p>
+        </div>
       </div>
     </div>
+  </section>
 
+  <div class="container pb-5">
     <!-- Filters & Search Toolbar -->
-    <div class="card p-3 shadow-sm mb-4 border-0">
+    <div class="card p-4 shadow-sm mb-4 border-0">
       <div class="row g-3">
         <div class="col-md-4">
-          <label class="form-label small fw-semibold">Search Keyword</label>
+          <label class="form-label small fw-semibold text-muted">Search Keyword or Venue</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
             <input type="text" id="filter-keyword" class="form-control" placeholder="Search title or venue..." data-testid="filter-keyword">
@@ -31,7 +37,7 @@
         </div>
 
         <div class="col-md-2">
-          <label class="form-label small fw-semibold">Category</label>
+          <label class="form-label small fw-semibold text-muted">Category</label>
           <select id="filter-category" class="form-select" data-testid="filter-category">
             <option value="">All Categories</option>
             <option value="Technology">Technology</option>
@@ -44,17 +50,17 @@
         </div>
 
         <div class="col-md-2">
-          <label class="form-label small fw-semibold">From Date</label>
+          <label class="form-label small fw-semibold text-muted">From Date</label>
           <input type="date" id="filter-start-date" class="form-control" data-testid="filter-start-date">
         </div>
 
         <div class="col-md-2">
-          <label class="form-label small fw-semibold">To Date</label>
+          <label class="form-label small fw-semibold text-muted">To Date</label>
           <input type="date" id="filter-end-date" class="form-control" data-testid="filter-end-date">
         </div>
 
         <div class="col-md-2">
-          <label class="form-label small fw-semibold">Sort By</label>
+          <label class="form-label small fw-semibold text-muted">Sort By</label>
           <select id="filter-sort" class="form-select" data-testid="filter-sort">
             <option value="date">Date (Earliest)</option>
             <option value="title">Title (A-Z)</option>
@@ -63,11 +69,18 @@
         </div>
       </div>
 
-      <div class="d-flex justify-content-end gap-2 mt-3 pt-2 border-top">
-        <button class="btn btn-outline-secondary btn-sm" onclick="resetFilters()">Reset</button>
-        <button class="btn btn-primary btn-sm px-4 fw-semibold" onclick="applyFilters()" data-testid="apply-filters-btn">
-          <i class="bi bi-funnel me-1"></i> Apply Filters
-        </button>
+      <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top flex-wrap gap-2">
+        <div class="text-muted small">
+          <i class="bi bi-info-circle me-1"></i> Filter events by timeline, category, and capacity
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary btn-sm px-3" onclick="resetFilters()">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+          </button>
+          <button class="btn btn-primary btn-sm px-4 fw-semibold" onclick="applyFilters()" data-testid="apply-filters-btn">
+            <i class="bi bi-funnel me-1"></i> Apply Filters
+          </button>
+        </div>
       </div>
     </div>
 
@@ -79,8 +92,14 @@
     </div>
 
     <!-- Pagination -->
-    <div id="pagination-controls" class="d-flex justify-content-center mt-4"></div>
+    <div id="pagination-controls" class="d-flex justify-content-center mt-5"></div>
   </div>
+
+  <footer class="py-4 mt-auto">
+    <div class="container text-center">
+      <p class="mb-0 text-muted small">&copy; 2026 Campus Events Manager. All rights reserved.</p>
+    </div>
+  </footer>
 
   <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="js/shared.js"></script>

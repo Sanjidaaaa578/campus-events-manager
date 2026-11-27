@@ -33,7 +33,7 @@ describe('End-to-End Testing (Selenium Web Driver)', () => {
       time: '10:00',
       venue: 'Main Hall',
       capacity: 50,
-      category: 'Tech'
+      category: 'Technology'
     });
     await EventModel.updateStatus(db, event.id, 'Approved');
 
@@ -49,6 +49,7 @@ describe('End-to-End Testing (Selenium Web Driver)', () => {
     options.addArguments('--no-sandbox');
     options.addArguments('--disable-dev-shm-usage');
     options.addArguments('--disable-gpu');
+    options.addArguments('--window-size=1440,1080');
 
     driver = await new Builder()
       .forBrowser('chrome')
@@ -71,61 +72,62 @@ describe('End-to-End Testing (Selenium Web Driver)', () => {
   test('Page loads and displays title and seeded events', async () => {
     await driver.get(BASE_URL);
 
-    // Verify Title
-    const titleElement = await driver.findElement(By.id('app-title'));
+    // Verify Title / Brand
+    const titleElement = await driver.wait(
+      until.elementLocated(By.css('[data-testid="nav-brand"]')),
+      10000
+    );
     const titleText = await titleElement.getText();
-    expect(titleText).toBe('Campus Events Manager');
+    expect(titleText).toContain('Campus Events');
 
     // Verify seeded event appears in list
     const eventItem = await driver.wait(
-      until.elementLocated(By.xpath("//h3[contains(text(), 'Annual Tech Summit')]")),
+      until.elementLocated(By.xpath("//*[contains(text(), 'Annual Tech Summit')]")),
       10000
     );
     expect(await eventItem.getText()).toBe('Annual Tech Summit');
   });
 
   test('Student can register a new account via the UI', async () => {
-    await driver.get(BASE_URL);
+    await driver.get(`${BASE_URL}/register.html`);
 
-    // Switch to Register Tab
-    const registerTabBtn = await driver.findElement(By.xpath("//button[contains(text(), 'Register')]"));
-    await registerTabBtn.click();
+    // Fill registration form
+    await driver.findElement(By.id('reg-name')).sendKeys('Selenium Student');
+    await driver.findElement(By.id('reg-email')).sendKeys('selenium_student@campus.edu');
+    await driver.findElement(By.id('reg-password')).sendKeys('password123');
+    await driver.findElement(By.id('reg-dept')).sendKeys('Informatics');
 
-    // Fill form
-    await driver.findElement(By.id('register-name')).sendKeys('Selenium Student');
-    await driver.findElement(By.id('register-email')).sendKeys('selenium_student@campus.edu');
-    await driver.findElement(By.id('register-password')).sendKeys('password123');
-    await driver.findElement(By.id('register-dept')).sendKeys('Informatics');
+    // Submit with scroll into view
+    const submitBtn = await driver.findElement(By.id('register-btn'));
+    await driver.executeScript('arguments[0].scrollIntoView(true);', submitBtn);
+    await driver.executeScript('arguments[0].click();', submitBtn);
 
-    // Submit
-    const submitBtn = await driver.findElement(By.id('register-submit-btn'));
-    await submitBtn.click();
-
-    // Wait for success message
-    const msgBox = await driver.wait(
-      until.elementLocated(By.xpath("//div[@id='auth-message' and contains(@class, 'success')]")),
+    // Wait for redirect to index.html with logged-in status
+    const userNameEl = await driver.wait(
+      until.elementLocated(By.id('nav-user-name')),
       10000
     );
-    expect(await msgBox.getText()).toContain('Registered successfully');
-
-    // Verify header updates with logged-in status
-    const userDisplay = await driver.findElement(By.id('user-display'));
-    expect(await userDisplay.getText()).toContain('Selenium Student (Student)');
+    expect(await userNameEl.getText()).toBe('Selenium Student');
   });
 
   test('Logged-in student registers for an event via the UI', async () => {
-    // Click Register on the event card
-    const registerBtn = await driver.wait(
-      until.elementLocated(By.className('btn-register')),
-      10000
-    );
-    await registerBtn.click();
+    // Navigate to event details
+    await driver.get(`${BASE_URL}/event-details.html?id=1`);
 
-    // Check confirmation message
-    const actionMsg = await driver.wait(
-      until.elementLocated(By.xpath("//div[@id='action-message' and contains(@class, 'success')]")),
+    // Wait for register button
+    const registerBtn = await driver.wait(
+      until.elementLocated(By.id('register-btn')),
       10000
     );
-    expect(await actionMsg.getText()).toContain('confirmed');
+    await driver.executeScript('arguments[0].scrollIntoView(true);', registerBtn);
+    await driver.executeScript('arguments[0].click();', registerBtn);
+
+    // Wait for action feedback
+    await driver.wait(
+      until.elementLocated(By.xpath("//*[contains(text(), 'Cancel Registration') or contains(@class, 'toast')]")),
+      10000
+    );
+    const updatedBtn = await driver.findElement(By.id('register-btn'));
+    expect(await updatedBtn.getText()).toContain('Cancel');
   });
 });

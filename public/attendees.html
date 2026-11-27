@@ -8,87 +8,126 @@
   <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
   <link rel="stylesheet" href="css/custom.css">
 </head>
-<body>
+<body class="bg-light">
   <div id="navbar-container"></div>
 
-  <div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <a href="my-events.html" class="btn btn-outline-secondary btn-sm mb-2"><i class="bi bi-arrow-left me-1"></i> Back to My Events</a>
-        <h2 class="fw-bold mb-1" id="event-roster-title">Attendee Roster</h2>
-        <p class="text-muted small mb-0" id="event-roster-subtitle">Loading event attendees and waiting list...</p>
+  <!-- Header Banner -->
+  <section class="bg-dark text-white py-4 mb-4 border-bottom border-secondary border-opacity-25" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%) !important;">
+    <div class="container py-2">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <a href="my-events.html" class="btn btn-glass btn-sm rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;">
+            <i class="bi bi-arrow-left"></i>
+          </a>
+          <div>
+            <span class="badge bg-primary bg-opacity-25 text-white border border-primary border-opacity-50 px-3 py-1 mb-1">EVENT ROSTER</span>
+            <h2 class="h3 fw-bold mb-0 text-white" id="event-roster-title">Attendee Roster</h2>
+            <p class="text-light opacity-75 small mb-0" id="event-roster-subtitle">Loading event attendees and waiting list...</p>
+          </div>
+        </div>
+        <button class="btn btn-warning btn-sm fw-semibold shadow-sm px-3" id="send-reminder-btn" onclick="sendAttendeeReminder()">
+          <i class="bi bi-bell-fill me-1"></i> Send Broadcast Reminder
+        </button>
       </div>
-      <button class="btn btn-warning btn-sm fw-semibold" id="send-reminder-btn" onclick="sendAttendeeReminder()">
-        <i class="bi bi-bell-fill me-1"></i> Send Reminder to Attendees
-      </button>
     </div>
+  </section>
 
+  <div class="container pb-5">
     <!-- Summary Stats Bar -->
     <div class="row g-3 mb-4">
       <div class="col-md-4">
-        <div class="card p-3 shadow-sm border-0 bg-success-subtle text-success">
-          <h6 class="text-uppercase small fw-bold mb-1">Confirmed Seats</h6>
-          <h3 class="fw-bold mb-0" id="total-registered-count">0</h3>
+        <div class="kpi-card">
+          <div class="d-flex align-items-center">
+            <div class="kpi-icon-box bg-success-subtle text-success me-3 mb-0">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div>
+              <div class="text-muted small fw-bold text-uppercase">Confirmed Seats</div>
+              <h3 class="fw-bold mb-0 text-dark" id="total-registered-count">0</h3>
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="card p-3 shadow-sm border-0 bg-warning-subtle text-dark">
-          <h6 class="text-uppercase small fw-bold mb-1">Waiting List</h6>
-          <h3 class="fw-bold mb-0" id="total-waitlisted-count">0</h3>
+        <div class="kpi-card">
+          <div class="d-flex align-items-center">
+            <div class="kpi-icon-box bg-warning-subtle text-warning me-3 mb-0">
+              <i class="bi bi-clock-history"></i>
+            </div>
+            <div>
+              <div class="text-muted small fw-bold text-uppercase">Waiting List</div>
+              <h3 class="fw-bold mb-0 text-dark" id="total-waitlisted-count">0</h3>
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="card p-3 shadow-sm border-0 bg-primary-subtle text-primary">
-          <h6 class="text-uppercase small fw-bold mb-1">Venue Capacity</h6>
-          <h3 class="fw-bold mb-0" id="total-capacity-count">0</h3>
+        <div class="kpi-card">
+          <div class="d-flex align-items-center">
+            <div class="kpi-icon-box bg-primary-subtle text-primary me-3 mb-0">
+              <i class="bi bi-building"></i>
+            </div>
+            <div>
+              <div class="text-muted small fw-bold text-uppercase">Total Venue Capacity</div>
+              <h3 class="fw-bold mb-0 text-dark" id="total-capacity-count">0</h3>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Attendees Table -->
-    <div class="card shadow-sm border-0 mb-4">
-      <div class="card-header bg-white py-3">
-        <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-check-circle me-2"></i> Confirmed Attendees</h5>
+    <div class="card shadow-sm border-0 mb-4 rounded-4 overflow-hidden">
+      <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+        <i class="bi bi-check-circle-fill text-success me-2 fs-5"></i>
+        <h5 class="fw-bold mb-0 text-dark">Confirmed Attendees</h5>
       </div>
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
+          <thead>
             <tr>
               <th scope="col" class="ps-4">Student Name</th>
-              <th scope="col">Email</th>
+              <th scope="col">Campus Email</th>
               <th scope="col">Department</th>
-              <th scope="col">Registered At</th>
+              <th scope="col">Registration Time</th>
             </tr>
           </thead>
           <tbody id="registered-table-body">
-            <tr><td colspan="4" class="text-center py-4 text-muted">No confirmed attendees yet.</td></tr>
+            <tr><td colspan="4" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm text-primary"></div></td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Waitlist Table -->
-    <div class="card shadow-sm border-0">
-      <div class="card-header bg-white py-3">
-        <h5 class="fw-bold mb-0 text-warning"><i class="bi bi-clock-history me-2"></i> Waiting List Queue</h5>
+    <!-- Waiting List Table -->
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+      <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+        <i class="bi bi-clock-history text-warning me-2 fs-5"></i>
+        <h5 class="fw-bold mb-0 text-dark">Waiting List Queue</h5>
       </div>
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
+          <thead>
             <tr>
-              <th scope="col" class="ps-4">Queue Position</th>
+              <th scope="col" class="ps-4" style="width: 120px;">Position</th>
               <th scope="col">Student Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Waitlisted At</th>
+              <th scope="col">Campus Email</th>
+              <th scope="col">Joined Waitlist At</th>
             </tr>
           </thead>
           <tbody id="waitlist-table-body">
-            <tr><td colspan="4" class="text-center py-4 text-muted">No students on the waiting list.</td></tr>
+            <tr><td colspan="4" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm text-primary"></div></td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
+
+  <footer class="py-4 mt-auto">
+    <div class="container text-center">
+      <p class="mb-0 text-muted small">&copy; 2026 Campus Events Manager. All rights reserved.</p>
+    </div>
+  </footer>
 
   <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="js/shared.js"></script>

@@ -12,35 +12,64 @@
   <div id="navbar-container"></div>
 
   <main class="main-content">
-    <!-- Hero Section -->
-    <section class="bg-primary text-white py-5 mb-5 shadow-sm">
-      <div class="container text-center py-4">
-        <h1 class="display-4 fw-bold mb-3" data-testid="hero-title">Experience Campus Life to the Fullest</h1>
-        <p class="lead mb-4 mx-auto" style="max-width: 700px;">
-          Discover hackathons, workshops, athletic tournaments, and academic symposiums. Register instantly with automatic waitlist management.
+    <!-- Modern Hero Section -->
+    <section class="hero-section text-center">
+      <div class="hero-glow-1"></div>
+      <div class="hero-glow-2"></div>
+      <div class="container position-relative" style="z-index: 2;">
+        <span class="hero-badge">
+          <i class="bi bi-stars text-warning me-2"></i> Official University Events Portal 2026
+        </span>
+        <h1 class="display-4 fw-bold mb-3 text-white" data-testid="hero-title" style="letter-spacing: -0.03em;">
+          Experience Campus Life <span class="gradient-text">to the Fullest</span>
+        </h1>
+        <p class="lead mb-4 mx-auto text-light opacity-75" style="max-width: 680px; font-size: 1.15rem; line-height: 1.6;">
+          Discover hackathons, masterclasses, athletic leagues, and symposiums. Register instantly with automated real-time waitlist promotion.
         </p>
-        <div class="d-flex justify-content-center gap-3">
-          <a href="events.html" class="btn btn-warning btn-lg fw-semibold" data-testid="hero-browse-btn">
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+          <a href="events.html" class="btn btn-primary btn-lg px-4 shadow" data-testid="hero-browse-btn">
             <i class="bi bi-search me-2"></i> Browse All Events
           </a>
-          <a href="register.html" class="btn btn-outline-light btn-lg" data-testid="hero-register-btn">
-            Create an Account
+          <a href="register.html" class="btn btn-glass btn-lg px-4" data-testid="hero-register-btn">
+            <i class="bi bi-person-plus me-2"></i> Create an Account
           </a>
+        </div>
+
+        <!-- Hero Stats Row -->
+        <div class="row justify-content-center hero-stats-row g-4 text-center">
+          <div class="col-6 col-md-3 hero-stat-item">
+            <h3>50+</h3>
+            <p>Active Seminars & Events</p>
+          </div>
+          <div class="col-6 col-md-3 hero-stat-item">
+            <h3>2,500+</h3>
+            <p>Registered Students</p>
+          </div>
+          <div class="col-6 col-md-3 hero-stat-item">
+            <h3>100%</h3>
+            <p>Automated Seat Allocation</p>
+          </div>
+          <div class="col-6 col-md-3 hero-stat-item">
+            <h3>24/7</h3>
+            <p>Live Notifications</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Quick Search & Featured Section -->
+    <!-- Floating Quick Search & Featured Section -->
     <div class="container pb-5">
-      <div class="card p-4 shadow-sm mb-5 border-0 bg-white">
+      <div class="floating-search-card mb-5">
         <div class="row g-3 align-items-center">
           <div class="col-md-7">
+            <label class="form-label small fw-semibold text-muted mb-1 d-none d-md-block">Keywords or Venue</label>
             <div class="input-group">
-              <span class="input-group-text bg-light"><i class="bi bi-search text-muted"></i></span>
-              <input type="text" id="quick-search" class="form-control form-control-lg" placeholder="Search events by title, venue, topic..." data-testid="quick-search-input">
+              <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+              <input type="text" id="quick-search" class="form-control form-control-lg border-start-0 ps-0" placeholder="Search hackathons, workshops, stadium, room..." data-testid="quick-search-input">
             </div>
           </div>
           <div class="col-md-3">
+            <label class="form-label small fw-semibold text-muted mb-1 d-none d-md-block">Category</label>
             <select id="quick-category" class="form-select form-select-lg" data-testid="quick-category-select">
               <option value="">All Categories</option>
               <option value="Technology">Technology</option>
@@ -51,17 +80,25 @@
               <option value="Social">Social</option>
             </select>
           </div>
-          <div class="col-md-2">
-            <button class="btn btn-primary btn-lg w-100 fw-semibold" onclick="handleSearchClick()" data-testid="quick-search-btn">
-              Search
+          <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-primary btn-lg w-100 fw-semibold h-100 py-2" onclick="handleSearchClick()" data-testid="quick-search-btn">
+              <i class="bi bi-arrow-right-circle me-1"></i> Search
             </button>
           </div>
         </div>
       </div>
 
+      <!-- Section Title -->
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0"><i class="bi bi-stars text-warning me-2"></i> Featured Campus Events</h2>
-        <a href="events.html" class="text-decoration-none fw-semibold">View All <i class="bi bi-arrow-right"></i></a>
+        <div>
+          <h2 class="fw-bold mb-1 d-flex align-items-center">
+            <i class="bi bi-stars text-warning me-2 fs-3"></i> Featured Campus Events
+          </h2>
+          <p class="text-muted small mb-0">Handpicked upcoming activities and popular student gatherings</p>
+        </div>
+        <a href="events.html" class="btn btn-outline-primary btn-sm px-3 fw-semibold">
+          View All Events <i class="bi bi-arrow-right ms-1"></i>
+        </a>
       </div>
 
       <!-- Events Grid -->
@@ -74,9 +111,15 @@
     </div>
   </main>
 
-  <footer class="bg-dark text-white py-4 mt-auto">
+  <footer class="py-4 mt-auto">
     <div class="container text-center">
-      <p class="mb-0 text-muted">&copy; 2026 Campus Events Manager. Designed for University Software Engineering.</p>
+      <div class="d-flex justify-content-center align-items-center mb-2">
+        <span class="brand-icon-box" style="width: 26px; height: 26px; font-size: 0.8rem; margin-right: 6px;">
+          <i class="bi bi-calendar2-week-fill"></i>
+        </span>
+        <strong class="text-white">Campus Events Manager</strong>
+      </div>
+      <p class="mb-0 text-muted small">&copy; 2026 Campus Events Manager. Built with modern web standards for university student engagement.</p>
     </div>
   </footer>
 

@@ -11,51 +11,65 @@
 <body class="bg-light">
   <div id="navbar-container"></div>
 
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-5">
-        <div class="card shadow border-0 p-4">
-          <div class="text-center mb-4">
-            <i class="bi bi-person-lock text-primary display-4"></i>
-            <h2 class="fw-bold mt-2">Welcome Back</h2>
-            <p class="text-muted small">Sign in to manage and register for campus events</p>
+  <div class="auth-wrapper">
+    <div class="auth-glow-bg"></div>
+
+    <div class="auth-card">
+      <div class="text-center mb-4">
+        <div class="auth-icon-circle mx-auto">
+          <i class="bi bi-box-arrow-in-right"></i>
+        </div>
+        <h2 class="fw-bold mb-1">Welcome Back</h2>
+        <p class="text-muted small mb-0">Sign in to manage and register for campus activities</p>
+      </div>
+
+      <form id="login-form" novalidate onsubmit="handleLoginSubmit(event)">
+        <div class="mb-3">
+          <label for="email" class="form-label fw-semibold small text-muted">Campus Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" id="email" class="form-control" placeholder="name@campus.edu" required data-testid="login-email">
           </div>
+          <div id="email-feedback" class="invalid-feedback">Please enter a valid campus email address.</div>
+        </div>
 
-          <form id="login-form" novalidate onsubmit="handleLoginSubmit(event)">
-            <div class="mb-3">
-              <label for="email" class="form-label fw-semibold">Email Address</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                <input type="email" id="email" class="form-control" placeholder="name@campus.edu" required data-testid="login-email">
-              </div>
-              <div id="email-feedback" class="invalid-feedback">Please enter a valid email address.</div>
-            </div>
-
-            <div class="mb-4">
-              <label for="password" class="form-label fw-semibold">Password</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-key"></i></span>
-                <input type="password" id="password" class="form-control" placeholder="••••••••" required data-testid="login-password">
-              </div>
-              <div id="password-feedback" class="invalid-feedback">Password is required.</div>
-            </div>
-
-            <button type="submit" id="login-btn" class="btn btn-primary w-100 py-2 fw-semibold" data-testid="login-submit-btn">
-              <span id="btn-text">Sign In</span>
-              <span id="btn-spinner" class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
-            </button>
-          </form>
-
-          <div class="mt-4 text-center">
-            <p class="text-muted small mb-0">Don't have an account? <a href="register.html" class="fw-semibold text-primary">Register here</a></p>
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label for="password" class="form-label fw-semibold small text-muted mb-0">Password</label>
           </div>
-
-          <div class="alert alert-info mt-4 mb-0 small">
-            <strong><i class="bi bi-info-circle me-1"></i> Demo Accounts:</strong><br>
-            • Admin: <code>admin@campus.edu</code> (pass: <code>password123</code>)<br>
-            • Organizer: <code>organizer1@campus.edu</code><br>
-            • Student: <code>alex@campus.edu</code>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-key"></i></span>
+            <input type="password" id="password" class="form-control" placeholder="••••••••" required data-testid="login-password">
           </div>
+          <div id="password-feedback" class="invalid-feedback">Password is required.</div>
+        </div>
+
+        <button type="submit" id="login-btn" class="btn btn-primary w-100 py-2 fw-semibold" data-testid="login-submit-btn">
+          <span id="btn-text"><i class="bi bi-box-arrow-in-right me-2"></i>Sign In</span>
+          <span id="btn-spinner" class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
+        </button>
+      </form>
+
+      <div class="mt-4 text-center">
+        <p class="text-muted small mb-0">Don't have an account? <a href="register.html" class="fw-semibold text-primary text-decoration-none">Create Account</a></p>
+      </div>
+
+      <!-- Quick Demo Login Helpers -->
+      <div class="mt-4 p-3 bg-light rounded-3 border">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="small fw-bold text-dark"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Demo Access:</span>
+          <span class="badge bg-white text-muted border small">Click to fill</span>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="demo-account-chip" onclick="quickFill('admin@campus.edu', 'password123')">
+            <i class="bi bi-shield-check text-warning me-1"></i> Admin
+          </button>
+          <button type="button" class="demo-account-chip" onclick="quickFill('organizer1@campus.edu', 'password123')">
+            <i class="bi bi-kanban text-info me-1"></i> Organizer
+          </button>
+          <button type="button" class="demo-account-chip" onclick="quickFill('alex@campus.edu', 'password123')">
+            <i class="bi bi-person text-success me-1"></i> Student
+          </button>
         </div>
       </div>
     </div>
@@ -64,5 +78,12 @@
   <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="js/shared.js"></script>
   <script src="js/login.js"></script>
+  <script>
+    function quickFill(email, password) {
+      document.getElementById('email').value = email;
+      document.getElementById('password').value = password;
+      showToast(`Filled credentials for ${email}`, 'success');
+    }
+  </script>
 </body>
 </html>
