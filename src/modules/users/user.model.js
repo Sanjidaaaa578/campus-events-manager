@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { runQuery, getQuery, allQuery } = require('../../config/database');
+const { UserFactory } = require('../../patterns/user.factory');
 
 class UserModel {
   /**
@@ -40,7 +41,7 @@ class UserModel {
   }
 
   /**
-   * Finds a user by ID (excluding password).
+   * Finds a user by ID (excluding password) and instantiates with UserFactory.
    */
   static async findById(db, id) {
     const row = await getQuery(
@@ -48,7 +49,8 @@ class UserModel {
       'SELECT id, name, email, role, department, created_at, updated_at FROM users WHERE id = ?',
       [id]
     );
-    return row || null;
+    if (!row) return null;
+    return UserFactory.createUser(row);
   }
 
   /**
