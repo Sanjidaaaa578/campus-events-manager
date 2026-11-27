@@ -35,7 +35,9 @@ class EventModel {
   static async findById(db, id) {
     const row = await getQuery(
       db,
-      `SELECT e.*, u.name as organizer_name, u.email as organizer_email 
+      `SELECT e.*, u.name as organizer_name, u.email as organizer_email,
+              (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id AND r.status = 'Registered') as registered_count,
+              (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id AND r.status = 'Waitlisted') as waitlisted_count
        FROM events e 
        JOIN users u ON e.organizer_id = u.id 
        WHERE e.id = ?`,
@@ -96,7 +98,12 @@ class EventModel {
     const countRow = await getQuery(db, `SELECT COUNT(*) as total ${baseSql}`, params);
     const total = countRow ? countRow.total : 0;
 
-    let sql = `SELECT e.*, u.name as organizer_name, u.email as organizer_email ${baseSql}`;
+    let sql = `
+      SELECT e.*, u.name as organizer_name, u.email as organizer_email,
+             (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id AND r.status = 'Registered') as registered_count,
+             (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id AND r.status = 'Waitlisted') as waitlisted_count
+      ${baseSql}
+    `;
 
     // Apply Strategy Pattern for sorting order
     const strategy = EventQueryContext.resolveStrategy(sortBy);

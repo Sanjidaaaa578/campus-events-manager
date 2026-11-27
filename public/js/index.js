@@ -1,3 +1,5 @@
+let showingAllFeatured = false;
+
 document.addEventListener('DOMContentLoaded', async () => {
   renderNavbar('home');
   loadFeaturedEvents();
@@ -12,10 +14,22 @@ function handleSearchClick() {
   window.location.href = `events.html?${params.toString()}`;
 }
 
-async function loadFeaturedEvents() {
+async function toggleFeaturedEvents() {
+  showingAllFeatured = !showingAllFeatured;
+  const btn = document.getElementById('toggle-all-featured-btn');
+  if (btn) {
+    btn.innerHTML = showingAllFeatured
+      ? '<i class="bi bi-grid-3x3-gap me-1"></i> Show Top 6'
+      : '<i class="bi bi-view-list me-1"></i> View All Events';
+  }
+  await loadFeaturedEvents(showingAllFeatured);
+}
+
+async function loadFeaturedEvents(all = false) {
   const grid = document.getElementById('events-grid');
   try {
-    const data = await API.fetch('/api/events?limit=6&sortBy=date');
+    const url = all ? '/api/events?sortBy=date' : '/api/events?limit=6&sortBy=date';
+    const data = await API.fetch(url);
     grid.innerHTML = '';
 
     if (!data.events || data.events.length === 0) {
@@ -33,6 +47,7 @@ async function loadFeaturedEvents() {
       const theme = getCategoryTheme(evt.category);
       const col = document.createElement('div');
       col.className = 'col-md-6 col-lg-4';
+      const regCount = evt.registered_count !== undefined ? evt.registered_count : 0;
       col.innerHTML = `
         <div class="card h-100 card-hover shadow-sm border-0" data-testid="event-card-${evt.id}">
           <!-- Category Themed Header Banner -->
@@ -43,7 +58,7 @@ async function loadFeaturedEvents() {
                 <i class="bi ${theme.icon} me-1"></i>${evt.category}
               </span>
               <span class="event-capacity-pill">
-                <i class="bi bi-people me-1"></i>Cap: ${evt.capacity}
+                <i class="bi bi-people me-1"></i>Seats: ${regCount}/${evt.capacity}
               </span>
             </div>
           </div>
@@ -59,7 +74,7 @@ async function loadFeaturedEvents() {
               <div class="event-meta-item">
                 <span class="event-meta-icon meta-icon-date"><i class="bi bi-calendar3"></i></span>
                 <div>
-                  <strong>${evt.date}</strong> at <span class="text-muted">${evt.time}</span>
+                  <strong>${evt.date}</strong> at <span class="text-muted">${formatTime(evt.time)}</span>
                 </div>
               </div>
               <div class="event-meta-item mb-3">

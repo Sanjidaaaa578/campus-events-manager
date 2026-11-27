@@ -26,6 +26,14 @@ function createApp(dbInstance) {
   // Serve static files from public directory
   app.use(express.static(path.join(__dirname, '../public')));
 
+  // Disable caching on all API routes so data updates immediately
+  app.use('/api', (req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    next();
+  });
+
   // Health check endpoint
   app.get('/api/health', (req, res) => {
     res.status(200).json({

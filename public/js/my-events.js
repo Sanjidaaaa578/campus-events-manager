@@ -35,7 +35,7 @@ async function loadMyOrganizedEvents() {
           <span class="badge bg-light text-muted border">${ev.category}</span>
         </td>
         <td>
-          <div class="small fw-semibold">${ev.date} at ${ev.time}</div>
+          <div class="small fw-semibold">${ev.date} at ${formatTime(ev.time)}</div>
           <div class="small text-muted">${ev.venue}</div>
         </td>
         <td>

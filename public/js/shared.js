@@ -27,7 +27,13 @@ const API = {
       headers['Content-Type'] = 'application/json';
     }
 
-    const res = await fetch(url, { ...options, headers });
+    const fetchOptions = {
+      ...options,
+      headers,
+      cache: options.cache || 'no-store'
+    };
+
+    const res = await fetch(url, fetchOptions);
     let data;
     try {
       data = await res.json();
@@ -50,6 +56,25 @@ window.API = API;
 window.isAuthenticated = () => !!API.getToken();
 window.apiRequest = (url, options) => API.fetch(url, options);
 window.getCurrentUser = () => API.getUser();
+
+/**
+ * Formats a 24-hour time string (e.g. "14:00" or "09:30") into a 12-hour AM/PM format (e.g. "2:00 PM" or "9:30 AM").
+ */
+function formatTime(timeStr) {
+  if (!timeStr) return '';
+  const trimmed = String(timeStr).trim();
+  if (/am|pm/i.test(trimmed)) return trimmed;
+  const parts = trimmed.split(':');
+  if (parts.length < 2) return trimmed;
+  let hours = parseInt(parts[0], 10);
+  const minutes = parts[1].slice(0, 2).padStart(2, '0');
+  if (isNaN(hours)) return trimmed;
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  return `${hours}:${minutes} ${ampm}`;
+}
+window.formatTime = formatTime;
 
 /**
  * Toast Notifications (Replaces alert())

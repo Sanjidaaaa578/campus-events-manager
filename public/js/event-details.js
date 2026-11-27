@@ -23,6 +23,7 @@ async function loadEventDetails(eventId) {
     currentEvent = data.event;
 
     // Check student's current registration status
+    userRegistrationStatus = null;
     const token = API.getToken();
     const user = API.getUser();
     if (token && user && user.role === 'Student') {
@@ -54,7 +55,7 @@ function renderEventView() {
   document.getElementById('event-title').textContent = currentEvent.title;
   document.getElementById('event-description').textContent = currentEvent.description || 'No description provided.';
   document.getElementById('event-category-badge').textContent = currentEvent.category;
-  document.getElementById('event-datetime').textContent = `${currentEvent.date} at ${currentEvent.time}`;
+  document.getElementById('event-datetime').textContent = `${currentEvent.date} at ${formatTime(currentEvent.time)}`;
   document.getElementById('event-venue').textContent = currentEvent.venue;
   document.getElementById('event-organizer-name').textContent = currentEvent.organizer_name || 'Campus Faculty';
   document.getElementById('event-organizer-email').textContent = currentEvent.organizer_email || 'events@campus.edu';
@@ -67,15 +68,20 @@ function renderEventView() {
 }
 
 async function updateCapacityAndButtons() {
-  let registeredCount = 0;
-  try {
-    const attendeesData = await API.fetch(`/api/events/${currentEvent.id}/attendees`);
-    registeredCount = attendeesData.totalRegistered || 0;
-  } catch {
-    registeredCount = 0;
+  let registeredCount = currentEvent.registered_count !== undefined ? Number(currentEvent.registered_count) : 0;
+  
+  // If user is Organizer or Admin, try getting fresh attendees roster counts as well
+  const user = API.getUser();
+  if (user && (user.role === 'Organizer' || user.role === 'Admin')) {
+    try {
+      const attendeesData = await API.fetch(`/api/events/${currentEvent.id}/attendees`);
+      if (attendeesData && attendeesData.totalRegistered !== undefined) {
+        registeredCount = attendeesData.totalRegistered;
+      }
+    } catch {}
   }
 
-  const capacity = currentEvent.capacity;
+  const capacity = Number(currentEvent.capacity) || 1;
   const pct = Math.min(100, Math.round((registeredCount / capacity) * 100));
   const isFull = registeredCount >= capacity;
 
@@ -85,7 +91,7 @@ async function updateCapacityAndButtons() {
   bar.className = `progress-bar ${isFull ? 'bg-danger' : pct > 75 ? 'bg-warning' : 'bg-success'}`;
 
   const statusText = document.getElementById('capacity-status-text');
-  statusText.textContent = isFull ? 'Event is currently at maximum capacity. Additional registrations will enter the waiting list.' : `${capacity - registeredCount} seats remaining.`;
+  statusText.textContent = isFull ? 'Event is currently at maximum capacity. Additional registrations will enter the waiting list.' : `${Math.max(0, capacity - registeredCount)} seats remaining.`;
 
   const actionBtn = document.getElementById('register-btn');
   const notice = document.getElementById('user-status-notice');

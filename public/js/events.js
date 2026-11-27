@@ -1,5 +1,6 @@
 let currentPage = 1;
-const limit = 6;
+let viewMode = 'paged'; // 'paged' (6 per page) or 'all'
+const PAGE_SIZE = 6;
 
 document.addEventListener('DOMContentLoaded', () => {
   renderNavbar('events');
@@ -11,9 +12,34 @@ document.addEventListener('DOMContentLoaded', () => {
   if (params.get('startDate')) document.getElementById('filter-start-date').value = params.get('startDate');
   if (params.get('endDate')) document.getElementById('filter-end-date').value = params.get('endDate');
   if (params.get('sortBy')) document.getElementById('filter-sort').value = params.get('sortBy');
+  if (params.get('view') === 'all') {
+    viewMode = 'all';
+    updateViewButtonsUI();
+  }
 
   loadEventsList();
 });
+
+function changeViewMode(mode) {
+  viewMode = mode;
+  currentPage = 1;
+  updateViewButtonsUI();
+  loadEventsList();
+}
+
+function updateViewButtonsUI() {
+  const btnPaged = document.getElementById('btn-view-paged');
+  const btnAll = document.getElementById('btn-view-all');
+  if (!btnPaged || !btnAll) return;
+
+  if (viewMode === 'all') {
+    btnAll.className = 'btn btn-primary active';
+    btnPaged.className = 'btn btn-outline-primary';
+  } else {
+    btnPaged.className = 'btn btn-primary active';
+    btnAll.className = 'btn btn-outline-primary';
+  }
+}
 
 function applyFilters() {
   currentPage = 1;
@@ -32,6 +58,8 @@ function resetFilters() {
 async function loadEventsList() {
   const container = document.getElementById('events-catalog-container');
   const pagination = document.getElementById('pagination-controls');
+  const countBadge = document.getElementById('events-count-badge');
+
   container.innerHTML = `
     <div class="col-12 spinner-container">
       <div class="spinner-border text-primary" role="status"></div>
@@ -46,8 +74,8 @@ async function loadEventsList() {
   const sortBy = document.getElementById('filter-sort').value;
 
   const q = new URLSearchParams({
-    page: currentPage,
-    limit: limit,
+    page: viewMode === 'all' ? 1 : currentPage,
+    limit: viewMode === 'all' ? 1000 : PAGE_SIZE,
     sortBy: sortBy
   });
   if (kw) q.append('keyword', kw);
@@ -58,6 +86,11 @@ async function loadEventsList() {
   try {
     const data = await API.fetch(`/api/events?${q.toString()}`);
     container.innerHTML = '';
+
+    const totalEvents = data.total || (data.events ? data.events.length : 0);
+    if (countBadge) {
+      countBadge.textContent = `${totalEvents} event${totalEvents === 1 ? '' : 's'}`;
+    }
 
     if (!data.events || data.events.length === 0) {
       container.innerHTML = `
@@ -76,6 +109,7 @@ async function loadEventsList() {
       const theme = getCategoryTheme(evt.category);
       const col = document.createElement('div');
       col.className = 'col-md-6 col-lg-4';
+      const regCount = evt.registered_count !== undefined ? evt.registered_count : 0;
       col.innerHTML = `
         <div class="card h-100 card-hover shadow-sm border-0" data-testid="catalog-event-${evt.id}">
           <!-- Category Themed Header Banner -->
@@ -86,7 +120,7 @@ async function loadEventsList() {
                 <i class="bi ${theme.icon} me-1"></i>${evt.category}
               </span>
               <span class="event-capacity-pill">
-                <i class="bi bi-people me-1"></i>Cap: ${evt.capacity}
+                <i class="bi bi-people me-1"></i>Seats: ${regCount}/${evt.capacity}
               </span>
             </div>
           </div>
@@ -102,7 +136,7 @@ async function loadEventsList() {
               <div class="event-meta-item">
                 <span class="event-meta-icon meta-icon-date"><i class="bi bi-calendar3"></i></span>
                 <div>
-                  <strong>${evt.date}</strong> at <span class="text-muted">${evt.time}</span>
+                  <strong>${evt.date}</strong> at <span class="text-muted">${formatTime(evt.time)}</span>
                 </div>
               </div>
               <div class="event-meta-item mb-3">
@@ -120,8 +154,8 @@ async function loadEventsList() {
       container.appendChild(col);
     });
 
-    // Render modern pagination
-    renderPagination(data.pagination);
+    // Render modern pagination or view all notice
+    renderPagination(data.pagination || { total: totalEvents, page: currentPage, limit: PAGE_SIZE, totalPages: Math.ceil(totalEvents / PAGE_SIZE) });
   } catch (err) {
     container.innerHTML = `
       <div class="col-12 text-center text-danger py-5">
@@ -134,6 +168,20 @@ async function loadEventsList() {
 
 function renderPagination(meta) {
   const container = document.getElementById('pagination-controls');
+  if (!container) return;
+
+  if (viewMode === 'all') {
+    const count = meta ? meta.total : 0;
+    container.innerHTML = `
+      <div class="text-center py-2">
+        <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill">
+          <i class="bi bi-check2-circle text-success me-1"></i> Showing all ${count} events
+        </span>
+      </div>
+    `;
+    return;
+  }
+
   if (!meta || meta.totalPages <= 1) {
     container.innerHTML = '';
     return;

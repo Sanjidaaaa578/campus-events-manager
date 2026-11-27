@@ -38,7 +38,7 @@ async function loadPendingEvents() {
           <div class="small text-muted">${ev.organizer_email}</div>
         </td>
         <td>
-          <div class="small fw-semibold">${ev.date} at ${ev.time}</div>
+          <div class="small fw-semibold">${ev.date} at ${formatTime(ev.time)}</div>
           <div class="small text-muted">${ev.venue}</div>
         </td>
         <td>

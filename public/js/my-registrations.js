@@ -64,7 +64,7 @@ function renderList(container, items, isWaitlist) {
           
           <div class="event-meta-item mt-2">
             <span class="event-meta-icon meta-icon-date"><i class="bi bi-calendar3"></i></span>
-            <div><strong>${item.date}</strong> at <span class="text-muted">${item.time}</span></div>
+            <div><strong>${item.date}</strong> at <span class="text-muted">${formatTime(item.time)}</span></div>
           </div>
           <div class="event-meta-item mb-3">
             <span class="event-meta-icon meta-icon-venue"><i class="bi bi-geo-alt"></i></span>

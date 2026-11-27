@@ -89,16 +89,21 @@
       </div>
 
       <!-- Section Title -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
           <h2 class="fw-bold mb-1 d-flex align-items-center">
             <i class="bi bi-stars text-warning me-2 fs-3"></i> Featured Campus Events
           </h2>
           <p class="text-muted small mb-0">Handpicked upcoming activities and popular student gatherings</p>
         </div>
-        <a href="events.html" class="btn btn-outline-primary btn-sm px-3 fw-semibold">
-          View All Events <i class="bi bi-arrow-right ms-1"></i>
-        </a>
+        <div class="d-flex align-items-center gap-2">
+          <button id="toggle-all-featured-btn" class="btn btn-outline-primary btn-sm px-3 fw-semibold" onclick="toggleFeaturedEvents()" data-testid="toggle-featured-btn">
+            <i class="bi bi-view-list me-1"></i> View All Events
+          </button>
+          <a href="events.html?view=all" class="btn btn-primary btn-sm px-3 fw-semibold" data-testid="catalog-all-btn">
+            Full Catalog <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
       </div>
 
       <!-- Events Grid -->
@@ -107,6 +112,12 @@
           <div class="spinner-border text-primary" role="status"></div>
           <p class="text-muted mt-2">Loading campus events...</p>
         </div>
+      </div>
+
+      <div id="featured-more-container" class="text-center mt-4">
+        <a href="events.html?view=all" class="btn btn-outline-secondary btn-sm px-4 rounded-pill">
+          Looking for more? Browse the complete events catalog <i class="bi bi-arrow-right ms-1"></i>
+        </a>
       </div>
     </div>
   </main>

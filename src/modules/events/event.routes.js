@@ -31,11 +31,21 @@ function createEventRoutes(getDb) {
         limit
       });
 
+      const parsedLimit = limit !== undefined && limit !== null ? parseInt(limit, 10) : total;
+      const parsedPage = page ? parseInt(page, 10) : 1;
+      const totalPages = parsedLimit > 0 ? Math.ceil(total / parsedLimit) : 1;
+
       res.status(200).json({
         events,
         total,
-        page: page ? parseInt(page, 10) : 1,
-        limit: limit ? parseInt(limit, 10) : total
+        page: parsedPage,
+        limit: parsedLimit,
+        pagination: {
+          total,
+          page: parsedPage,
+          limit: parsedLimit,
+          totalPages
+        }
       });
     } catch (error) {
       next(error);

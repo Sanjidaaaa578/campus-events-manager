@@ -70,10 +70,20 @@
       </div>
 
       <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top flex-wrap gap-2">
-        <div class="text-muted small">
-          <i class="bi bi-info-circle me-1"></i> Filter events by timeline, category, and capacity
+        <div class="text-muted small d-flex align-items-center gap-2">
+          <span><i class="bi bi-info-circle me-1"></i> Filter events by timeline, category, and capacity</span>
+          <span class="badge bg-light text-dark border ms-1" id="events-count-badge"></span>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <!-- View mode toggle: 6 Cards vs View All -->
+          <div class="btn-group btn-group-sm" role="group" aria-label="Events display mode">
+            <button type="button" class="btn btn-outline-primary active" id="btn-view-paged" onclick="changeViewMode('paged')" title="Show 6 events per page with pagination">
+              <i class="bi bi-grid-3x3-gap me-1"></i> 6 Per Page
+            </button>
+            <button type="button" class="btn btn-outline-primary" id="btn-view-all" onclick="changeViewMode('all')" title="View all events on a single page" data-testid="btn-view-all">
+              <i class="bi bi-view-list me-1"></i> View All
+            </button>
+          </div>
           <button class="btn btn-outline-secondary btn-sm px-3" onclick="resetFilters()">
             <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
           </button>
