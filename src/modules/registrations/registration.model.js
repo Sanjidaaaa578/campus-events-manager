@@ -122,7 +122,7 @@ class RegistrationModel {
         db,
         `SELECT * FROM registrations 
          WHERE event_id = ? AND status = 'Waitlisted' 
-         ORDER BY registered_at ASC LIMIT 1`,
+         ORDER BY registered_at ASC, id ASC LIMIT 1`,
         [eventId]
       );
 
@@ -144,10 +144,10 @@ class RegistrationModel {
   }
 
   /**
-   * Gets all registered/waitlisted events for a student.
+   * Gets all registered/waitlisted events for a student, calculating waitlist queue position.
    */
   static async getStudentRegistrations(db, studentId) {
-    return allQuery(
+    const list = await allQuery(
       db,
       `SELECT r.id as registration_id, r.status as registration_status, r.registered_at,
               e.id as event_id, e.title, e.description, e.date, e.time, e.venue, e.category, e.capacity
@@ -157,6 +157,21 @@ class RegistrationModel {
        ORDER BY e.date ASC, e.time ASC`,
       [studentId]
     );
+
+    // Compute waitlist position for waitlisted events
+    for (const item of list) {
+      if (item.registration_status === 'Waitlisted') {
+        const queueRow = await getQuery(
+          db,
+          `SELECT COUNT(*) as pos FROM registrations 
+           WHERE event_id = ? AND status = 'Waitlisted' AND (registered_at < ? OR (registered_at = ? AND id <= ?))`,
+          [item.event_id, item.registered_at, item.registered_at, item.registration_id]
+        );
+        item.waitlist_position = queueRow ? queueRow.pos : 1;
+      }
+    }
+
+    return list;
   }
 
   /**

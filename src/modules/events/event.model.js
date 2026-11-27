@@ -45,12 +45,11 @@ class EventModel {
   }
 
   /**
-   * Finds all events with optional keyword search, category, date filtering,
-   * and Strategy Pattern dynamic sorting.
+   * Finds all events with optional keyword search, category, date, date range (startDate, endDate),
+   * Strategy Pattern sorting, and optional pagination (page, limit).
    */
-  static async findAll(db, { keyword, category, date, status, organizerId, sortBy } = {}) {
-    let sql = `
-      SELECT e.*, u.name as organizer_name, u.email as organizer_email 
+  static async findAll(db, { keyword, category, date, startDate, endDate, status, organizerId, sortBy, page, limit } = {}) {
+    let baseSql = `
       FROM events e 
       JOIN users u ON e.organizer_id = u.id 
       WHERE 1=1
@@ -58,37 +57,66 @@ class EventModel {
     const params = [];
 
     if (status) {
-      sql += ' AND e.status = ?';
+      baseSql += ' AND e.status = ?';
       params.push(status);
     }
 
     if (organizerId) {
-      sql += ' AND e.organizer_id = ?';
+      baseSql += ' AND e.organizer_id = ?';
       params.push(organizerId);
     }
 
     if (category) {
-      sql += ' AND LOWER(e.category) = LOWER(?)';
+      baseSql += ' AND LOWER(e.category) = LOWER(?)';
       params.push(category.trim());
     }
 
     if (date) {
-      sql += ' AND e.date = ?';
+      baseSql += ' AND e.date = ?';
       params.push(date.trim());
     }
 
+    if (startDate) {
+      baseSql += ' AND e.date >= ?';
+      params.push(startDate.trim());
+    }
+
+    if (endDate) {
+      baseSql += ' AND e.date <= ?';
+      params.push(endDate.trim());
+    }
+
     if (keyword) {
-      sql += ' AND (e.title LIKE ? OR e.description LIKE ? OR e.venue LIKE ?)';
+      baseSql += ' AND (e.title LIKE ? OR e.description LIKE ? OR e.venue LIKE ?)';
       const term = `%${keyword.trim()}%`;
       params.push(term, term, term);
     }
+
+    // Total count query for pagination
+    const countRow = await getQuery(db, `SELECT COUNT(*) as total ${baseSql}`, params);
+    const total = countRow ? countRow.total : 0;
+
+    let sql = `SELECT e.*, u.name as organizer_name, u.email as organizer_email ${baseSql}`;
 
     // Apply Strategy Pattern for sorting order
     const strategy = EventQueryContext.resolveStrategy(sortBy);
     const context = new EventQueryContext(strategy);
     sql += ` ORDER BY ${context.getOrderByClause()}`;
 
-    return allQuery(db, sql, params);
+    // Pagination
+    const queryParams = [...params];
+    if (limit !== undefined && limit !== null) {
+      const parsedLimit = parseInt(limit, 10);
+      if (!isNaN(parsedLimit) && parsedLimit > 0) {
+        const parsedPage = Math.max(1, parseInt(page, 10) || 1);
+        const offset = (parsedPage - 1) * parsedLimit;
+        sql += ' LIMIT ? OFFSET ?';
+        queryParams.push(parsedLimit, offset);
+      }
+    }
+
+    const events = await allQuery(db, sql, queryParams);
+    return { events, total };
   }
 
   /**
