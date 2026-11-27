@@ -66,6 +66,11 @@ function createApp(dbInstance) {
     });
   });
 
+  // 404 handler for unknown static web pages
+  app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, '../public/404.html'));
+  });
+
   // Centralized error handling middleware
   app.use((err, req, res, next) => {
     const statusCode = err.status || 500;
