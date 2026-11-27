@@ -95,7 +95,6 @@ async function updateCapacityAndButtons() {
 
   const actionBtn = document.getElementById('register-btn');
   const notice = document.getElementById('user-status-notice');
-  const user = API.getUser();
 
   if (!API.getToken()) {
     actionBtn.textContent = 'Log in to Register';
