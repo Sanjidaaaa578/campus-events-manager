@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "seed": "node src/seed.js",
     "test": "cross-env NODE_ENV=test jest --runInBand --testPathIgnorePatterns=tests/e2e",
     "test:unit": "cross-env NODE_ENV=test jest --runInBand --testPathIgnorePatterns=tests/e2e",
     "test:e2e": "cross-env NODE_ENV=test jest tests/e2e --runInBand",
@@ -22,6 +23,9 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "bootstrap": "^5.3.9",
+    "bootstrap-icons": "^1.13.2",
+    "chart.js": "^4.6.2",
     "dotenv": "^18.0.10",
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3",
