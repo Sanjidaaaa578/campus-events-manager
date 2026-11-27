@@ -1,4 +1,5 @@
 const { runQuery, getQuery, allQuery } = require('../../config/database');
+const { EventQueryContext } = require('../../patterns/event.strategy');
 
 class EventModel {
   /**
@@ -44,10 +45,10 @@ class EventModel {
   }
 
   /**
-   * Finds all events with optional keyword search, category, and date filtering.
-   * By default for public users, filters only Approved events unless specified.
+   * Finds all events with optional keyword search, category, date filtering,
+   * and Strategy Pattern dynamic sorting.
    */
-  static async findAll(db, { keyword, category, date, status, organizerId } = {}) {
+  static async findAll(db, { keyword, category, date, status, organizerId, sortBy } = {}) {
     let sql = `
       SELECT e.*, u.name as organizer_name, u.email as organizer_email 
       FROM events e 
@@ -82,12 +83,16 @@ class EventModel {
       params.push(term, term, term);
     }
 
-    sql += ' ORDER BY e.date ASC, e.time ASC';
+    // Apply Strategy Pattern for sorting order
+    const strategy = EventQueryContext.resolveStrategy(sortBy);
+    const context = new EventQueryContext(strategy);
+    sql += ` ORDER BY ${context.getOrderByClause()}`;
+
     return allQuery(db, sql, params);
   }
 
   /**
-   * Updates an event (organizer can update details).
+   * Updates an event.
    */
   static async update(db, id, { title, description, date, time, venue, capacity, category }) {
     const event = await this.findById(db, id);
@@ -128,7 +133,7 @@ class EventModel {
   }
 
   /**
-   * Updates event status (Admin approve/reject, or Organizer cancel).
+   * Updates event status.
    */
   static async updateStatus(db, id, status) {
     const validStatuses = ['Pending', 'Approved', 'Rejected', 'Cancelled'];
