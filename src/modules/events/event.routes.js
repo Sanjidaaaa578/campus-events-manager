@@ -1,24 +1,21 @@
 const express = require('express');
 const EventModel = require('./event.model');
+const NotificationModel = require('../notifications/notification.model');
+const RegistrationModel = require('../registrations/registration.model');
 const { authenticateToken, authorizeRoles } = require('../users/auth.middleware');
 
 function createEventRoutes(getDb) {
   const router = express.Router();
-
-  // Helper to resolve db instance
   const resolveDb = async () => (typeof getDb === 'function' ? await getDb() : getDb);
 
   /**
    * GET /api/events
    * Browse events with keyword search, category, and date filtering.
-   * Students/Public view Approved events by default; Admins/Organizers can query other statuses.
    */
   router.get('/', async (req, res, next) => {
     try {
       const db = await resolveDb();
       const { keyword, category, date, status, organizerId } = req.query;
-
-      // Default to Approved unless user filters or is admin/organizer
       const eventStatus = status || 'Approved';
 
       const events = await EventModel.findAll(db, {
@@ -54,7 +51,7 @@ function createEventRoutes(getDb) {
 
   /**
    * POST /api/events
-   * Organizer creates a new event (submitted as 'Pending' for Admin review).
+   * Organizer creates a new event.
    */
   router.post('/', authenticateToken, authorizeRoles('Organizer', 'Admin'), async (req, res, next) => {
     try {
@@ -83,7 +80,7 @@ function createEventRoutes(getDb) {
 
   /**
    * PUT /api/events/:id
-   * Organizer edits their own event (or Admin edits any event).
+   * Organizer edits event details and notifies registered students of updates.
    */
   router.put('/:id', authenticateToken, authorizeRoles('Organizer', 'Admin'), async (req, res, next) => {
     try {
@@ -93,7 +90,6 @@ function createEventRoutes(getDb) {
         return res.status(404).json({ error: 'NotFound', message: 'Event not found' });
       }
 
-      // Organizers can only edit their own events
       if (req.user.role === 'Organizer' && event.organizer_id !== req.user.id) {
         return res.status(403).json({
           error: 'Forbidden',
@@ -102,6 +98,15 @@ function createEventRoutes(getDb) {
       }
 
       const updatedEvent = await EventModel.update(db, req.params.id, req.body);
+
+      // Notify registered students of the event update
+      const attendees = await RegistrationModel.getEventAttendees(db, req.params.id);
+      const studentIds = attendees.filter((a) => a.status === 'Registered').map((a) => a.student_id);
+      await NotificationModel.broadcastToUsers(db, studentIds, {
+        title: `Event Updated: ${updatedEvent.title}`,
+        message: `The event "${updatedEvent.title}" has been updated. Date: ${updatedEvent.date}, Time: ${updatedEvent.time}, Venue: ${updatedEvent.venue}.`
+      });
+
       res.status(200).json({
         message: 'Event updated successfully',
         event: updatedEvent
@@ -113,7 +118,7 @@ function createEventRoutes(getDb) {
 
   /**
    * DELETE /api/events/:id
-   * Organizer deletes their own event (or Admin deletes any event).
+   * Organizer cancels/deletes event and notifies registered students.
    */
   router.delete('/:id', authenticateToken, authorizeRoles('Organizer', 'Admin'), async (req, res, next) => {
     try {
@@ -129,6 +134,14 @@ function createEventRoutes(getDb) {
           message: 'You can only delete events you have organized'
         });
       }
+
+      // Notify attendees before deletion
+      const attendees = await RegistrationModel.getEventAttendees(db, req.params.id);
+      const studentIds = attendees.map((a) => a.student_id);
+      await NotificationModel.broadcastToUsers(db, studentIds, {
+        title: `Event Cancelled: ${event.title}`,
+        message: `The event "${event.title}" originally scheduled for ${event.date} has been cancelled.`
+      });
 
       const result = await EventModel.delete(db, req.params.id);
       res.status(200).json(result);
