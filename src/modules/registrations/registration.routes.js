@@ -1,7 +1,7 @@
 const express = require('express');
 const RegistrationModel = require('./registration.model');
 const EventModel = require('../events/event.model');
-const NotificationModel = require('../notifications/notification.model');
+const { defaultNotificationSubject } = require('../../patterns/notification.observer');
 const { authenticateToken, authorizeRoles } = require('../users/auth.middleware');
 
 function createRegistrationRoutes(getDb) {
@@ -10,7 +10,7 @@ function createRegistrationRoutes(getDb) {
 
   /**
    * POST /api/events/:id/register
-   * Student registers for an event and receives notification.
+   * Student registers for an event and triggers notification via Observer Pattern.
    */
   router.post('/:id/register', authenticateToken, authorizeRoles('Student', 'Admin'), async (req, res, next) => {
     try {
@@ -28,16 +28,17 @@ function createRegistrationRoutes(getDb) {
         ? 'Event capacity reached. You have been added to the waiting list.'
         : 'Registration confirmed successfully.';
 
-      // Send in-app notification to student
-      await NotificationModel.create(db, {
-        userId: studentId,
-        title: isWaitlisted
-          ? `Waitlist Confirmation: ${registration.event_title}`
-          : `Registration Confirmed: ${registration.event_title}`,
-        message: isWaitlisted
-          ? `You are currently on the waiting list for "${registration.event_title}". We will notify you if a spot opens up.`
-          : `Your registration for "${registration.event_title}" on ${registration.event_date} at ${registration.event_venue} has been confirmed.`
-      });
+      // Notify via Observer Pattern
+      await defaultNotificationSubject.notify(
+        isWaitlisted ? 'REGISTRATION_WAITLISTED' : 'REGISTRATION_CONFIRMED',
+        {
+          studentId,
+          eventTitle: registration.event_title,
+          eventDate: registration.event_date,
+          eventVenue: registration.event_venue
+        },
+        db
+      );
 
       res.status(201).json({
         message,
@@ -50,7 +51,7 @@ function createRegistrationRoutes(getDb) {
 
   /**
    * DELETE /api/events/:id/register
-   * Student cancels registration and receives confirmation notification.
+   * Student cancels registration and triggers observer notifications.
    */
   router.delete('/:id/register', authenticateToken, authorizeRoles('Student', 'Admin'), async (req, res, next) => {
     try {
@@ -64,20 +65,26 @@ function createRegistrationRoutes(getDb) {
         studentId
       });
 
-      // Send cancellation confirmation notification to the student
-      await NotificationModel.create(db, {
-        userId: studentId,
-        title: `Registration Cancelled: ${event ? event.title : 'Event'}`,
-        message: `Your registration for "${event ? event.title : 'the event'}" has been cancelled.`
-      });
+      // Notify cancellation via Observer Pattern
+      await defaultNotificationSubject.notify(
+        'REGISTRATION_CANCELLED',
+        {
+          studentId,
+          eventTitle: event ? event.title : 'Event'
+        },
+        db
+      );
 
-      // If a waitlisted student was promoted, notify them
+      // If a waitlisted student was promoted, notify them via Observer Pattern
       if (result.promotedStudent) {
-        await NotificationModel.create(db, {
-          userId: result.promotedStudent.student_id,
-          title: `Spot Available: ${result.promotedStudent.event_title}`,
-          message: `Great news! A spot opened up and your registration for "${result.promotedStudent.event_title}" is now confirmed.`
-        });
+        await defaultNotificationSubject.notify(
+          'WAITLIST_PROMOTED',
+          {
+            studentId: result.promotedStudent.student_id,
+            eventTitle: result.promotedStudent.event_title
+          },
+          db
+        );
       }
 
       res.status(200).json(result);
