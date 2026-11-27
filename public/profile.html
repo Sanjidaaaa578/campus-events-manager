@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile - Campus Events Manager</title>
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body class="bg-light min-vh-100 d-flex flex-column">
+
+  <div id="navbar-container"></div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+  <main class="container py-4 flex-grow-1">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body p-4 p-md-5">
+            <div class="d-flex align-items-center mb-4">
+              <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle me-3">
+                <i class="bi bi-person-circle fs-1"></i>
+              </div>
+              <div>
+                <h2 class="h3 fw-bold mb-1" id="profileHeading">My Profile</h2>
+                <p class="text-muted mb-0">Manage your campus account details and preferences</p>
+              </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="profileLoading" class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading profile...</span>
+              </div>
+              <p class="text-muted mt-2">Loading account details...</p>
+            </div>
+
+            <!-- Profile Form -->
+            <form id="profileForm" class="d-none" novalidate>
+              <div class="row g-3">
+                
+                <div class="col-md-6">
+                  <label for="profileEmail" class="form-label fw-semibold">Email Address</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                    <input type="email" class="form-control bg-light" id="profileEmail" disabled readonly>
+                  </div>
+                  <div class="form-text">Email address is tied to your university account and cannot be changed.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="profileRole" class="form-label fw-semibold">Role</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-shield-check"></i></span>
+                    <input type="text" class="form-control bg-light text-capitalize" id="profileRole" disabled readonly>
+                  </div>
+                  <div class="form-text">System access level assigned to your account.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="profileName" class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="profileName" required data-testid="profile-name-input">
+                  <div class="invalid-feedback">Please enter your full name.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="profileDepartment" class="form-label fw-semibold">Department / Faculty</label>
+                  <input type="text" class="form-control" id="profileDepartment" placeholder="e.g. Computer Science" data-testid="profile-department-input">
+                </div>
+
+                <div class="col-12"><hr class="my-3"></div>
+
+                <div class="col-12">
+                  <h5 class="fw-bold mb-1">Change Password</h5>
+                  <p class="text-muted small mb-3">Leave blank if you do not wish to change your password.</p>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="profilePassword" class="form-label fw-semibold">New Password</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                    <input type="password" class="form-control" id="profilePassword" minlength="6" placeholder="Min. 6 characters" data-testid="profile-password-input">
+                  </div>
+                  <div class="invalid-feedback">Password must be at least 6 characters.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="profileConfirmPassword" class="form-label fw-semibold">Confirm New Password</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                    <input type="password" class="form-control" id="profileConfirmPassword" placeholder="Re-type new password" data-testid="profile-confirm-password-input">
+                  </div>
+                  <div class="invalid-feedback" id="confirmPasswordFeedback">Passwords do not match.</div>
+                </div>
+
+                <div class="col-12 mt-4 d-flex justify-content-end gap-2">
+                  <button type="button" class="btn btn-outline-secondary px-4" id="resetProfileBtn">Reset</button>
+                  <button type="submit" class="btn btn-primary px-4 fw-semibold" id="saveProfileBtn" data-testid="save-profile-btn">
+                    <span class="spinner-border spinner-border-sm d-none me-1" id="saveSpinner"></span>
+                    <i class="bi bi-check2-circle me-1"></i> Save Changes
+                  </button>
+                </div>
+
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
+    <div class="container">&copy; 2026 Campus Events Manager. All rights reserved.</div>
+  </footer>
+
+  <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>
