@@ -1,7 +1,7 @@
 const express = require('express');
 const EventModel = require('./event.model');
-const NotificationModel = require('../notifications/notification.model');
 const RegistrationModel = require('../registrations/registration.model');
+const { defaultNotificationSubject } = require('../../patterns/notification.observer');
 const { authenticateToken, authorizeRoles } = require('../users/auth.middleware');
 
 function createEventRoutes(getDb) {
@@ -81,7 +81,7 @@ function createEventRoutes(getDb) {
 
   /**
    * PUT /api/events/:id
-   * Organizer edits event details and notifies registered students of updates.
+   * Organizer edits event details and notifies registered students via Observer Pattern.
    */
   router.put('/:id', authenticateToken, authorizeRoles('Organizer', 'Admin'), async (req, res, next) => {
     try {
@@ -100,13 +100,21 @@ function createEventRoutes(getDb) {
 
       const updatedEvent = await EventModel.update(db, req.params.id, req.body);
 
-      // Notify registered students of the event update
+      // Notify registered students using Observer Pattern
       const attendees = await RegistrationModel.getEventAttendees(db, req.params.id);
       const studentIds = attendees.filter((a) => a.status === 'Registered').map((a) => a.student_id);
-      await NotificationModel.broadcastToUsers(db, studentIds, {
-        title: `Event Updated: ${updatedEvent.title}`,
-        message: `The event "${updatedEvent.title}" has been updated. Date: ${updatedEvent.date}, Time: ${updatedEvent.time}, Venue: ${updatedEvent.venue}.`
-      });
+
+      await defaultNotificationSubject.notify(
+        'EVENT_UPDATED',
+        {
+          attendeeIds: studentIds,
+          eventTitle: updatedEvent.title,
+          date: updatedEvent.date,
+          time: updatedEvent.time,
+          venue: updatedEvent.venue
+        },
+        db
+      );
 
       res.status(200).json({
         message: 'Event updated successfully',
@@ -119,7 +127,7 @@ function createEventRoutes(getDb) {
 
   /**
    * DELETE /api/events/:id
-   * Organizer cancels/deletes event and notifies registered students.
+   * Organizer cancels/deletes event and notifies registered students via Observer Pattern.
    */
   router.delete('/:id', authenticateToken, authorizeRoles('Organizer', 'Admin'), async (req, res, next) => {
     try {
@@ -136,12 +144,19 @@ function createEventRoutes(getDb) {
         });
       }
 
+      // Notify attendees before deletion using Observer Pattern
       const attendees = await RegistrationModel.getEventAttendees(db, req.params.id);
       const studentIds = attendees.map((a) => a.student_id);
-      await NotificationModel.broadcastToUsers(db, studentIds, {
-        title: `Event Cancelled: ${event.title}`,
-        message: `The event "${event.title}" originally scheduled for ${event.date} has been cancelled.`
-      });
+
+      await defaultNotificationSubject.notify(
+        'EVENT_CANCELLED',
+        {
+          attendeeIds: studentIds,
+          eventTitle: event.title,
+          date: event.date
+        },
+        db
+      );
 
       const result = await EventModel.delete(db, req.params.id);
       res.status(200).json(result);
