@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const createAuthRoutes = require('./modules/users/auth.routes');
 const createEventRoutes = require('./modules/events/event.routes');
+const createRegistrationRoutes = require('./modules/registrations/registration.routes');
 const { connectDatabase } = require('./config/database');
 
 function createApp(dbInstance) {
@@ -40,6 +41,11 @@ function createApp(dbInstance) {
   // Event routes
   const eventRoutes = createEventRoutes(getDb);
   app.use('/api/events', eventRoutes);
+
+  // Registration routes
+  const registrationRoutes = createRegistrationRoutes(getDb);
+  app.use('/api/events', registrationRoutes);
+  app.use('/api/registrations', registrationRoutes);
 
   // 404 handler for unknown API routes
   app.use('/api', (req, res) => {
