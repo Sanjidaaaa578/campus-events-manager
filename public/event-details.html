@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Details - Campus Events Manager</title>
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <div id="navbar-container"></div>
+
+  <div class="container py-5">
+    <a href="events.html" class="btn btn-outline-secondary btn-sm mb-4"><i class="bi bi-arrow-left me-1"></i> Back to Catalog</a>
+
+    <div id="details-loading" class="spinner-container">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="text-muted mt-2">Loading event details...</p>
+    </div>
+
+    <div id="details-content" class="row g-4 d-none">
+      <!-- Main Details Column -->
+      <div class="col-lg-8">
+        <div class="card p-4 shadow-sm border-0 mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span id="event-category-badge" class="badge bg-primary fs-6"></span>
+            <span id="event-status-badge" class="badge"></span>
+          </div>
+          <h2 id="event-title" class="fw-bold text-primary mb-3"></h2>
+          <p id="event-description" class="lead fs-6 text-muted mb-4"></p>
+
+          <div class="row g-3 bg-light p-3 rounded mb-4">
+            <div class="col-sm-6">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-calendar3 fs-4 text-primary me-3"></i>
+                <div>
+                  <small class="text-muted d-block">Date & Time</small>
+                  <strong id="event-datetime"></strong>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-geo-alt fs-4 text-danger me-3"></i>
+                <div>
+                  <small class="text-muted d-block">Venue Location</small>
+                  <strong id="event-venue"></strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h5 class="fw-bold mb-2">Organizer Contact</h5>
+          <p class="text-muted mb-0">
+            <i class="bi bi-person-badge me-2"></i>Organized by <strong id="event-organizer-name"></strong> (<span id="event-organizer-email"></span>)
+          </p>
+        </div>
+      </div>
+
+      <!-- Registration Card Column -->
+      <div class="col-lg-4">
+        <div class="card p-4 shadow-sm border-0 sticky-top" style="top: 2rem;">
+          <h4 class="fw-bold mb-3">Event Registration</h4>
+
+          <!-- Capacity Bar -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between small fw-semibold mb-1">
+              <span>Seat Capacity</span>
+              <span id="capacity-text">0 / 0</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+              <div id="capacity-bar" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+            </div>
+            <small id="capacity-status-text" class="text-muted mt-1 d-block"></small>
+          </div>
+
+          <!-- Registration Action Box -->
+          <div id="action-box" class="pt-3 border-top">
+            <button id="register-btn" class="btn btn-primary btn-lg w-100 fw-semibold" onclick="handleRegistrationAction()" data-testid="event-action-btn">
+              Register for Event
+            </button>
+            <p id="user-status-notice" class="small text-center text-muted mt-2 mb-0"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/event-details.js"></script>
+</body>
+</html>

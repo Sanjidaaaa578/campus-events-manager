@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Event - Campus Events Manager</title>
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <div id="navbar-container"></div>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card p-4 shadow-sm border-0">
+          <div class="d-flex align-items-center mb-4">
+            <i class="bi bi-calendar-plus text-primary display-5 me-3"></i>
+            <div>
+              <h2 class="fw-bold mb-0">Create Campus Event</h2>
+              <p class="text-muted small mb-0">Submit a new event for administrative review and approval</p>
+            </div>
+          </div>
+
+          <form id="create-event-form" novalidate onsubmit="handleCreateEvent(event)">
+            <div class="mb-3">
+              <label for="event-title" class="form-label fw-semibold">Event Title *</label>
+              <input type="text" id="event-title" class="form-control" placeholder="Annual Campus Robotics Summit" required data-testid="create-title">
+              <div class="invalid-feedback">Title is required.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="event-desc" class="form-label fw-semibold">Description</label>
+              <textarea id="event-desc" class="form-control" rows="4" placeholder="Event schedule, guest speakers, prerequisites..." data-testid="create-desc"></textarea>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="event-date" class="form-label fw-semibold">Date *</label>
+                <input type="date" id="event-date" class="form-control" required data-testid="create-date">
+                <div class="invalid-feedback">Valid date is required.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="event-time" class="form-label fw-semibold">Time *</label>
+                <input type="time" id="event-time" class="form-control" required data-testid="create-time">
+                <div class="invalid-feedback">Time is required.</div>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-5">
+                <label for="event-venue" class="form-label fw-semibold">Venue *</label>
+                <input type="text" id="event-venue" class="form-control" placeholder="Main Auditorium" required data-testid="create-venue">
+                <div class="invalid-feedback">Venue is required.</div>
+              </div>
+              <div class="col-md-3">
+                <label for="event-capacity" class="form-label fw-semibold">Capacity *</label>
+                <input type="number" id="event-capacity" class="form-control" min="1" placeholder="50" required data-testid="create-capacity">
+                <div class="invalid-feedback">Positive integer required.</div>
+              </div>
+              <div class="col-md-4">
+                <label for="event-category" class="form-label fw-semibold">Category *</label>
+                <select id="event-category" class="form-select" data-testid="create-category">
+                  <option value="Technology">Technology</option>
+                  <option value="Workshop">Workshop</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Career">Career</option>
+                  <option value="Academic">Academic</option>
+                  <option value="Social">Social</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 border-top pt-3">
+              <a href="my-events.html" class="btn btn-outline-secondary">Cancel</a>
+              <button type="submit" id="submit-event-btn" class="btn btn-primary px-4 fw-semibold" data-testid="create-submit-btn">
+                Submit for Approval
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/create-event.js"></script>
+</body>
+</html>

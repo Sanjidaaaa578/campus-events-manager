@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard & Analytics - Campus Events Manager</title>
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <div id="navbar-container"></div>
+
+  <div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="fw-bold mb-1"><i class="bi bi-bar-chart-line text-primary me-2"></i> System Analytics Dashboard</h2>
+        <p class="text-muted small mb-0">Overview of campus event engagement, attendance rates, and popular themes</p>
+      </div>
+      <a href="admin-approvals.html" class="btn btn-outline-warning btn-sm"><i class="bi bi-check2-circle me-1"></i> Review Pending Approvals</a>
+    </div>
+
+    <!-- Summary Metrics Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6 col-lg-3">
+        <div class="card p-3 shadow-sm border-0 border-start border-primary border-4">
+          <small class="text-muted text-uppercase fw-bold">Total Events</small>
+          <h2 class="fw-bold text-primary mb-0 mt-1" id="metric-total-events">0</h2>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="card p-3 shadow-sm border-0 border-start border-success border-4">
+          <small class="text-muted text-uppercase fw-bold">Approved Events</small>
+          <h2 class="fw-bold text-success mb-0 mt-1" id="metric-approved-events">0</h2>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="card p-3 shadow-sm border-0 border-start border-info border-4">
+          <small class="text-muted text-uppercase fw-bold">Total Registrations</small>
+          <h2 class="fw-bold text-info mb-0 mt-1" id="metric-total-registrations">0</h2>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="card p-3 shadow-sm border-0 border-start border-warning border-4">
+          <small class="text-muted text-uppercase fw-bold">Students on Waitlist</small>
+          <h2 class="fw-bold text-warning mb-0 mt-1" id="metric-total-waitlisted">0</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <!-- Most Popular Events -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-fire me-2"></i> Most Popular Events</h5>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="ps-3">Event Title</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Organizer</th>
+                  <th scope="col" class="text-end pe-3">Registrations</th>
+                </tr>
+              </thead>
+              <tbody id="popular-events-tbody">
+                <tr><td colspan="4" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm text-primary"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Events per Category Chart -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-pie-chart me-2"></i> Events by Category</h5>
+          </div>
+          <div class="card-body d-flex align-items-center justify-content-center p-3">
+            <div style="max-height: 280px; width: 100%;">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance & Occupancy Table -->
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white py-3">
+        <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-people-fill me-2"></i> Event Attendance & Venue Occupancy Rates</h5>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col" class="ps-4">Event</th>
+              <th scope="col">Date</th>
+              <th scope="col">Capacity</th>
+              <th scope="col">Registered</th>
+              <th scope="col">Waitlisted</th>
+              <th scope="col" class="pe-4" style="min-width: 180px;">Occupancy Rate</th>
+            </tr>
+          </thead>
+          <tbody id="attendance-tbody">
+            <tr><td colspan="6" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm text-primary"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+  <script src="vendor/chartjs/chart.umd.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/admin-dashboard.js"></script>
+</body>
+</html>
