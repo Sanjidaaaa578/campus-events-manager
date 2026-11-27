@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Events Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="nav-container">
+      <h1 id="app-title">Campus Events Manager</h1>
+      <div id="auth-status">
+        <span id="user-display">Not logged in</span>
+        <button id="logout-btn" style="display:none;" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Auth Section -->
+    <section id="auth-section" class="card">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchAuthTab('login')">Login</button>
+        <button class="tab-btn" onclick="switchAuthTab('register')">Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <h2>Login to Your Account</h2>
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" required placeholder="user@campus.edu">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required placeholder="Enter password">
+        </div>
+        <button type="submit" id="login-submit-btn">Login</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" style="display:none;" onsubmit="handleRegister(event)">
+        <h2>Create an Account</h2>
+        <div class="form-group">
+          <label for="register-name">Full Name</label>
+          <input type="text" id="register-name" required placeholder="Jane Doe">
+        </div>
+        <div class="form-group">
+          <label for="register-email">Email</label>
+          <input type="email" id="register-email" required placeholder="user@campus.edu">
+        </div>
+        <div class="form-group">
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" required placeholder="Create password">
+        </div>
+        <div class="form-group">
+          <label for="register-role">Role</label>
+          <select id="register-role">
+            <option value="Student">Student</option>
+            <option value="Organizer">Organizer</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="register-dept">Department</label>
+          <input type="text" id="register-dept" placeholder="Computer Science">
+        </div>
+        <button type="submit" id="register-submit-btn">Register</button>
+      </form>
+      <div id="auth-message" class="message-box"></div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events-section" class="card">
+      <h2>Upcoming Campus Events</h2>
+      <div class="controls-bar">
+        <input type="text" id="search-input" placeholder="Search by title, venue..." oninput="filterEvents()">
+        <select id="sort-select" onchange="filterEvents()">
+          <option value="date">Sort by Date</option>
+          <option value="title">Sort by Title</option>
+          <option value="capacity">Sort by Capacity</option>
+        </select>
+      </div>
+
+      <div id="events-list" class="events-grid">
+        <p class="empty-notice">Loading campus events...</p>
+      </div>
+      <div id="action-message" class="message-box"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
