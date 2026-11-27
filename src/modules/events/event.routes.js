@@ -10,24 +10,33 @@ function createEventRoutes(getDb) {
 
   /**
    * GET /api/events
-   * Browse events with keyword search, category, date filtering, and sortBy strategy.
+   * Browse events with keyword search, category, date, date range, pagination, and sortBy strategy.
    */
   router.get('/', async (req, res, next) => {
     try {
       const db = await resolveDb();
-      const { keyword, category, date, status, organizerId, sortBy } = req.query;
+      const { keyword, category, date, startDate, endDate, status, organizerId, sortBy, page, limit } = req.query;
       const eventStatus = status || 'Approved';
 
-      const events = await EventModel.findAll(db, {
+      const { events, total } = await EventModel.findAll(db, {
         keyword,
         category,
         date,
+        startDate,
+        endDate,
         status: eventStatus,
         organizerId,
-        sortBy
+        sortBy,
+        page,
+        limit
       });
 
-      res.status(200).json({ events });
+      res.status(200).json({
+        events,
+        total,
+        page: page ? parseInt(page, 10) : 1,
+        limit: limit ? parseInt(limit, 10) : total
+      });
     } catch (error) {
       next(error);
     }
