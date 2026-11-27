@@ -10,12 +10,12 @@ function createEventRoutes(getDb) {
 
   /**
    * GET /api/events
-   * Browse events with keyword search, category, and date filtering.
+   * Browse events with keyword search, category, date filtering, and sortBy strategy.
    */
   router.get('/', async (req, res, next) => {
     try {
       const db = await resolveDb();
-      const { keyword, category, date, status, organizerId } = req.query;
+      const { keyword, category, date, status, organizerId, sortBy } = req.query;
       const eventStatus = status || 'Approved';
 
       const events = await EventModel.findAll(db, {
@@ -23,7 +23,8 @@ function createEventRoutes(getDb) {
         category,
         date,
         status: eventStatus,
-        organizerId
+        organizerId,
+        sortBy
       });
 
       res.status(200).json({ events });
@@ -135,7 +136,6 @@ function createEventRoutes(getDb) {
         });
       }
 
-      // Notify attendees before deletion
       const attendees = await RegistrationModel.getEventAttendees(db, req.params.id);
       const studentIds = attendees.map((a) => a.student_id);
       await NotificationModel.broadcastToUsers(db, studentIds, {
