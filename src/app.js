@@ -1,39 +1,63 @@
 const express = require('express');
 const path = require('path');
+const createAuthRoutes = require('./modules/users/auth.routes');
+const { connectDatabase } = require('./config/database');
 
-const app = express();
+function createApp(dbInstance) {
+  const app = express();
 
-// Body parsing middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+  // Lazy or passed database instance
+  let db = dbInstance;
+  const getDb = async () => {
+    if (!db) {
+      db = await connectDatabase();
+    }
+    return db;
+  };
 
-// Serve static files from public directory
-app.use(express.static(path.join(__dirname, '../public')));
+  // Body parsing middlewares
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
-// Basic health check endpoint
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    message: 'Campus Events Manager API is operational',
-    timestamp: new Date().toISOString()
+  // Serve static files from public directory
+  app.use(express.static(path.join(__dirname, '../public')));
+
+  // Health check endpoint
+  app.get('/api/health', (req, res) => {
+    res.status(200).json({
+      status: 'OK',
+      message: 'Campus Events Manager API is operational',
+      timestamp: new Date().toISOString()
+    });
   });
-});
 
-// 404 handler for unknown API routes
-app.use('/api', (req, res) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `API endpoint ${req.method} ${req.originalUrl} does not exist`
+  // Auth & User routes
+  const authRoutes = createAuthRoutes(getDb);
+  app.use('/api/auth', authRoutes);
+  app.use('/api/users', authRoutes);
+
+  // 404 handler for unknown API routes
+  app.use('/api', (req, res) => {
+    res.status(404).json({
+      error: 'Not Found',
+      message: `API endpoint ${req.method} ${req.originalUrl} does not exist`
+    });
   });
-});
 
-// Centralized error handling middleware
-app.use((err, req, res, next) => {
-  const statusCode = err.status || 500;
-  res.status(statusCode).json({
-    error: err.name || 'InternalServerError',
-    message: err.message || 'An unexpected error occurred'
+  // Centralized error handling middleware
+  app.use((err, req, res, next) => {
+    const statusCode = err.status || 500;
+    res.status(statusCode).json({
+      error: err.name || 'Error',
+      message: err.message || 'An unexpected error occurred'
+    });
   });
-});
 
-module.exports = app;
+  return app;
+}
+
+// Default app instance for server & direct usage
+const defaultApp = createApp();
+
+module.exports = defaultApp;
+module.exports.createApp = createApp;
